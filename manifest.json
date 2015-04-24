@@ -8,17 +8,19 @@
     "matches": ["http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php*&action=grade*"],
     "js": ["jquery-2.1.3.min.js","quickSubmit.js"],
     "run_at": "document_end"
-  },{
-    "matches":["http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php?id=*&action=grading"],
-    "js":["jquery-2.1.3.min.js","callBGLoader.js"],
-    "run_at":"document_end"
-  }],
+  }
+//  ,{
+//    "matches":["http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php?id=*&action=grading"],
+//    "js":["jquery-2.1.3.min.js","callBGLoader.js"],
+//    "run_at":"document_end"
+//  }
+  ],
   "background":{
     "scripts":["jquery-2.1.3.min.js","BGLoader.js"],
     "persistent": false
   },
-
   "permissions": [
+    "tabs",
     "http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php*"]
 }
 

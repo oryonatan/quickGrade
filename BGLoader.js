@@ -1,15 +1,32 @@
 /**
  * Created by yonatan on 4/17/2015.
  */
-
-counter = 1;
+var concurrentOpens = 1;
+var counter = 1;
+var shouldOpenInterval;
 function openInBg(request){
     var exID = request[0];
-    var rowID = request[counter];
-    counter++;
-    var urlOfEdit =
-        "http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php?id="+ exID +"&rownum="+ rowID+"&action=grade";
-    chrome.tabs.create({ url: urlOfEdit });
+    for (var i=0; i<concurrentOpens;i++) {
+        try {
+            var rowID = request[counter + i];
+            if (typeof rowID == 'undefined' ) {
+                clearInterval(shouldOpenInterval);
+                return;
+            }
+            var urlOfEdit =
+                "http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php?id=" + exID + "&rownum=" + rowID + "&action=grade";
+            chrome.tabs.create({url: urlOfEdit},function(tab){
+                setTimeout(function () {
+                    chrome.tabs.remove(tab.id);
+                },20000);
+            });
+        }
+        catch (err) {
+            break;
+        }
+    }
+    counter += concurrentOpens;
+
     //var ifrm = document.createElement("IFRAME");
     //ifrm.setAttribute("src",
     //    "http://moodle2.cs.huji.ac.il/nu14/mod/assign/view.php?id="+ exID +"&rownum="+ rowID+"&action=grade");
@@ -19,8 +36,7 @@ function openInBg(request){
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        openInBg(request);
-     //setInterval(openInBg(request),5000);
+        shouldOpenInterval = setInterval(openInBg,1000,request);
     }
 );
 
